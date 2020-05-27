@@ -38,6 +38,10 @@ public struct Vector3D: Equatable {
         return Vector3D(x: 0, y: 0, z: 0)
     }
     
+    var norm2: Double {
+        return magnitude
+    }
+    
     var magnitude: Double {
         return sqrt(x * x + y * y + z * z)
     }

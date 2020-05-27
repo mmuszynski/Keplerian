@@ -87,6 +87,11 @@ class KeplerianTests: XCTestCase {
         let solver = LambertSolver(position1: position1, position2: position2, dt: (2455610-2455450)*86400, mu: 1.32712440018e11)
         let solutions = solver.solve()
         
+        guard !solutions.isEmpty else {
+            XCTFail("No solutions found")
+            return
+        }
+        
         XCTAssertEqual(solutions[0].0.x, 4.65144349746008, accuracy: 1e-5)
         XCTAssertEqual(solutions[0].0.y, 26.0824144093203, accuracy: 1e-5)
         XCTAssertEqual(solutions[0].0.z, -1.39306043231699, accuracy: 1e-5)
@@ -99,7 +104,7 @@ class KeplerianTests: XCTestCase {
         let position1 = Vector3D(x: 170145121.321308, y: -117637192.836034, z: -6642044.2724648)
         let position2 = Vector3D(x: -803451694.669228, y: 121525767.116065, z: 17465211.7766441)
         
-        let solver = LambertSolver(position1: position1, position2: position2, dt: (2457500-2456300), mu: 1.32712440018e11)
+        let solver = LambertSolver(position1: position1, position2: position2, dt: (2457500-2456300)*86400, mu: 1.32712440018e11)
         let solutions = solver.solve()
                 
         XCTAssertEqual(solutions[0].0.x, 13.7407773577481)
