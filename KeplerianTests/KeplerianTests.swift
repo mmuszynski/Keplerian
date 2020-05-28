@@ -58,13 +58,13 @@ class KeplerianTests: XCTestCase {
         let orbit = Orbit(semiMajorAxis: 2000, eccentricity: 0, meanAnomaly: 0, inclination: 0, LAN: 0, argumentOfPeriapsis: 0, centralBody: sun)
         
         let initialPosition = Vector3D(x: 2000, y: 0, z: 0)
-        XCTAssertEqual(initialPosition, orbit.cartesianPosition(atTime: 0))
+        XCTAssertEqual(initialPosition, orbit.cartesian(atTime: 0).position)
         
         let eccentricOrbit = Orbit(semiMajorAxis: 2000, eccentricity: 0.5, meanAnomaly: 0, inclination: 0, LAN: 0, argumentOfPeriapsis: 0, centralBody: sun)
-        XCTAssertEqual(initialPosition, orbit.cartesianPosition(atTime: 0))
+        XCTAssertEqual(initialPosition, orbit.cartesian(atTime: 0).position)
         
         let expectedPosition = Vector3D(x: -3000, y: 0, z: 0)
-        let diff = expectedPosition - eccentricOrbit.cartesianPosition(atTime: 8885.765876316733)
+        let diff = expectedPosition - eccentricOrbit.cartesian(atTime: 8885.765876316733).position
         XCTAssertEqual(diff.magnitude, 0, accuracy: 1e-6)
     }
     

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import simd
 
 public class Orbit {
     //The Keplerian Orbital elements
@@ -240,6 +241,85 @@ public class Orbit {
         let y = r * (sin(rad(from: LAN)) * cos(nu + argumentOfPeriapsis) + cos(rad(from: LAN)) * sin(nu + argumentOfPeriapsis) * cos(inclination))
         let z = r * sin(inclination) * sin(nu + argumentOfPeriapsis)
         return Vector3D(x: x, y: y, z: z)
+    }
+    
+    public func cartesian(atTime time: Double = 0) -> (position: Vector3D, velocity: Vector3D) {
+        return cartesian(atTimeFromEpoch: timeFromEpoch(for: time))
+    }
+    
+    private func cartesian(atTimeFromEpoch time: Double = 0) -> (position: Vector3D, velocity: Vector3D) {
+        func rad(from deg: Double) -> Double {
+            return Double.pi * deg / 180
+        }
+        
+        //def coe2rv(a, e, i, OMEGA, omega, nu, **kwargs):
+        //#accept kwarg input for mu. If none is used, use that of Earth
+        //#with a satellite of negligably small mass in km^3/s^2
+        //try:
+        //    mu = kwargs['mu']
+        //except:
+        //    mu = 398600.4415
+
+        let i = inclination
+        let OMEGA = rad(from: LAN)
+        let omega = argumentOfPeriapsis
+        let nu = trueAnomaly(atTimeFromEpoch: time)
+        let e = eccentricity
+        let mu = self.centralBody.gravitationalParameter
+        
+        //#define semipameter
+        //p = a*(1-e**2)
+        let p = semiMajorAxis * ( 1 - e * e )
+
+        //#define r in the perifocal plane
+        
+        //r_pqw = vstack([
+        //    ((p*cos(nu))/(1+e*cos(nu))),
+        //    ((p*sin(nu))/(1+e*cos(nu))),
+        //    zeros(length)
+        //    ])
+        let r_pqw = Vector3D(x: p * cos(nu) / (1 + e * cos(nu)),
+                             y: p * sin(nu) / (1 + e * cos(nu)),
+                             z: 0)
+        let r_pqw_simd = r_pqw.simd
+
+        //#define v in the perifocal plane
+        //v_pqw = vstack([
+        //    (-sqrt(mu/p)*sin(nu)),
+        //    (sqrt(mu/p)*(e+cos(nu))),
+        //    zeros(length)
+        //   ])
+        let v_pqw = Vector3D(x: -sqrt(mu/p)*sin(nu),
+                             y: sqrt(mu/p)*(e+cos(nu)),
+                             z: 0)
+        let v_pqw_simd = v_pqw.simd
+        
+        func rz(_ angle: Double) -> simd_double3x3 {
+            simd_double3x3([
+                simd_double3( cos(-OMEGA), sin(-OMEGA), 0),
+                simd_double3(-sin(-OMEGA), cos(-OMEGA), 0),
+                simd_double3( 0,            0,          1)
+            ])
+        }
+        
+        func rx(_ angle: Double) -> simd_double3x3 {
+            simd_double3x3([
+                simd_double3(1, 0, 0),
+                simd_double3(0, cos(-i), sin(-i)),
+                simd_double3(0, -sin(-i), cos(-i))
+            ])
+        }
+        
+        let pqw2ijk = rz(-OMEGA) * rx(-i) * rz(-omega)
+        let r_ijk = pqw2ijk * r_pqw_simd
+        let v_ijk = pqw2ijk * v_pqw_simd
+                
+        //pqw2ijk = rz(-OMEGA).dot(rx(-i).dot(rz(-omega)))
+        //r_ijk = pqw2ijk.dot(r_pqw)
+        //v_ijk = pqw2ijk.dot(v_pqw)
+        //X_ijk = vstack([r_ijk,v_ijk]).T[0]
+        
+        return (position: Vector3D(from: r_ijk), velocity: Vector3D(from: v_ijk))
     }
     
 }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import simd
 
 struct Vector2D: Equatable {
     static func ==(lhs: Vector2D, rhs: Vector2D) -> Bool {
@@ -33,6 +34,16 @@ public struct Vector3D: Equatable {
     var x: Double
     var y: Double
     var z: Double
+    
+    init(x: Double, y: Double, z: Double) {
+        self.x = x
+        self.y = y
+        self.z = z
+    }
+
+    init (from: simd_double3) {
+        self = Vector3D(x: from.x, y: from.y, z: from.z)
+    }
     
     static var zero: Vector3D {
         return Vector3D(x: 0, y: 0, z: 0)
@@ -61,6 +72,10 @@ public struct Vector3D: Equatable {
         var new = self
         new.normalize()
         return new
+    }
+    
+    var simd: simd_double3 {
+        return simd_double3(x: x, y: y, z: z)
     }
 }
 
