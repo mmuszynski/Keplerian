@@ -17,6 +17,7 @@
 		27481140247DBF5F00753335 /* Units.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2748113F247DBF5E00753335 /* Units.swift */; };
 		2748114A247DBF6800753335 /* Keplerian.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27481128247DBF3300753335 /* Keplerian.framework */; };
 		27481151247DBF7200753335 /* KeplerianTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27481150247DBF7200753335 /* KeplerianTests.swift */; };
+		27E638ED247F543E0087FB0A /* Porkchop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E638EC247F543E0087FB0A /* Porkchop.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 		27481145247DBF6800753335 /* KeplerianTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KeplerianTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		27481149247DBF6800753335 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		27481150247DBF7200753335 /* KeplerianTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeplerianTests.swift; sourceTree = "<group>"; };
+		27E638EC247F543E0087FB0A /* Porkchop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Porkchop.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +92,7 @@
 				2748113D247DBF5700753335 /* VectorMath.swift */,
 				27481133247DBF5000753335 /* CelestialBody.swift */,
 				27481136247DBF5000753335 /* Lambert.swift */,
+				27E638EC247F543E0087FB0A /* Porkchop.swift */,
 				27481137247DBF5000753335 /* Orbit.swift */,
 				27481135247DBF5000753335 /* Orbit+CustomStringConvertible.swift */,
 				27481134247DBF5000753335 /* Orbit+TestValues.swift */,
@@ -224,6 +227,7 @@
 				2748113B247DBF5000753335 /* Lambert.swift in Sources */,
 				2748113E247DBF5700753335 /* VectorMath.swift in Sources */,
 				2748113C247DBF5000753335 /* Orbit.swift in Sources */,
+				27E638ED247F543E0087FB0A /* Porkchop.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

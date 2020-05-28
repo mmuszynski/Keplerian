@@ -243,3 +243,19 @@ public class Orbit {
     }
     
 }
+
+extension Orbit: Equatable {
+    public static func == (lhs: Orbit, rhs: Orbit) -> Bool {
+        if lhs.semiMajorAxis != rhs.semiMajorAxis { return false }
+        if lhs.eccentricity != rhs.eccentricity { return false }
+        if lhs.meanAnomaly != rhs.meanAnomaly { return false }
+        if lhs.inclination != rhs.inclination { return false }
+        if lhs.LAN != rhs.LAN { return false }
+        if lhs.argumentOfPeriapsis != rhs.argumentOfPeriapsis { return false }
+        if lhs.epoch != rhs.epoch { return false }
+        
+        if lhs.centralBody != rhs.centralBody { return false }
+        
+        return true
+    }
+}

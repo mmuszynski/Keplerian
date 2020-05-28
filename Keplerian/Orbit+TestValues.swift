@@ -34,10 +34,10 @@ extension Orbit {
     }
     
     public class var kerbin: Orbit {
-        Orbit(semiMajorAxis: 13599840256 , eccentricity: 0, meanAnomaly: 3.14, inclination: 0, LAN: 0, argumentOfPeriapsis: 0, centralBody: .kerbol)
+        Orbit(semiMajorAxis: 13599840256 , eccentricity: 0, meanAnomaly: 3.14, inclination: 0, LAN: 0, argumentOfPeriapsis: 0, centralBody: .Kerbol)
     }
     
     public class var duna: Orbit {
-        Orbit(semiMajorAxis: 20726155264, eccentricity: 0.051, meanAnomaly: 3.14, inclination: 0.06, LAN: 135.5, argumentOfPeriapsis: 0, centralBody: .kerbol)
+        Orbit(semiMajorAxis: 20726155264, eccentricity: 0.051, meanAnomaly: 3.14, inclination: 0.06, LAN: 135.5, argumentOfPeriapsis: 0, centralBody: .Kerbol)
     }
 }

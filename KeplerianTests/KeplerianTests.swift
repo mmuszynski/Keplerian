@@ -77,7 +77,6 @@ class KeplerianTests: XCTestCase {
 
         let solver = LambertSolver(position1: initial, position2: final, dt: 1000)
         let solutions = solver.solve()
-        print(solutions)
     }
     
     func testLambertSolver() {
@@ -107,46 +106,30 @@ class KeplerianTests: XCTestCase {
         let solver = LambertSolver(position1: position1, position2: position2, dt: (2457500-2456300)*86400, mu: 1.32712440018e11)
         let solutions = solver.solve()
                 
-        XCTAssertEqual(solutions[0].0.x, 13.7407773577481)
-        XCTAssertEqual(solutions[0].0.y, 28.8309931231422)
-        XCTAssertEqual(solutions[0].0.z, 0.691285008034955)
-        XCTAssertEqual(solutions[0].1.x, -0.883933068957334)
-        XCTAssertEqual(solutions[0].1.y, -7.98362701426338)
-        XCTAssertEqual(solutions[0].1.z, -0.240770597841448)
+        XCTAssertEqual(solutions[0].0.x, 13.7407773577481, accuracy: 1e-5)
+        XCTAssertEqual(solutions[0].0.y, 28.8309931231422, accuracy: 1e-5)
+        XCTAssertEqual(solutions[0].0.z, 0.691285008034955, accuracy: 1e-5)
+        XCTAssertEqual(solutions[0].1.x, -0.883933068957334, accuracy: 1e-5)
+        XCTAssertEqual(solutions[0].1.y, -7.98362701426338, accuracy: 1e-5)
+        XCTAssertEqual(solutions[0].1.z, -0.240770597841448, accuracy: 1e-5)
     }
     
-//    func testNonTrivialLambertSolver() {
-//        let sun = CelestialBody(gravitationalParameter: 1.32712440018e11, radius: 6390000)
-//        let earthOrbit = Orbit(semiMajorAxis: 146.9e6.km,
-//                               eccentricity: 0.0167086,
-//                               meanAnomaly: 358.617.deg,
-//                               inclination: 0.deg,
-//                               LAN: 174.9.deg,
-//                               argumentOfPeriapsis: 288.1.deg,
-//                               centralBody: sun)
-//        earthOrbit.epoch = .J2000
-//
-//        let venusOrbit = Orbit(semiMajorAxis: 10820800.0.km,
-//                               eccentricity: 0.006772,
-//                               meanAnomaly: 50.115.deg,
-//                               inclination: 3.39458.deg,
-//                               LAN: 76.680.deg,
-//                               argumentOfPeriapsis: 54.884.deg,
-//                               centralBody: sun)
-//        venusOrbit.epoch = .J2000
-//
-//        let position1 = earthOrbit.cartesianPosition(atTime: 2455450)
-//        let position2 = venusOrbit.cartesianPosition(atTime: 2455610)
-//
-//        let expectedV1 = Vector3D(x: 4.65144349746008, y: 26.0824144093203, z: -1.39306043231699)
-//        let expectedV2 = Vector3D(x: 16.7926204519414, y: -33.3516748429805, z: 1.52302150358741)
-//
-//        let solver = LambertSolver(position1: position1, position2: position2, dt: 2455610-2455450, mu: sun.gravitationalParameter)
-//        let solutions = solver.solve()
-//        print(solutions)
-//
-//        print(position1)
-//        print(position2)
-//    }
+    func testOrbitEquality() {
+        XCTAssertEqual(Orbit.kerbin, Orbit.kerbin)
+        XCTAssertNotEqual(Orbit.kerbin, Orbit.duna)
+    }
+    
+    func testBodyEquality() {
+        XCTAssertEqual(CelestialBody.Kerbin, .Kerbin)
+        XCTAssertNotEqual(CelestialBody.Kerbin, .Duna)
+        XCTAssertNotEqual(CelestialBody.Kerbol, .Kerbin)
+    }
+    
+    func testKerbalPorkchop() {
+        let kerbinToDuna = Porkchop(from: .Kerbin, to: .Duna, leavingAfter: 0)
+        measure {
+            try! kerbinToDuna.solve()
+        }
+    }
     
 }
