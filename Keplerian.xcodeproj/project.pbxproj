@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		273505B624813C6400542337 /* OrbitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273505B524813C6400542337 /* OrbitTests.swift */; };
+		273505B8248149B700542337 /* Orbit+KSP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273505B7248149B700542337 /* Orbit+KSP.swift */; };
+		273505BA248149CC00542337 /* CelestialBody+KSP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273505B9248149CC00542337 /* CelestialBody+KSP.swift */; };
 		2748112D247DBF3300753335 /* Keplerian.h in Headers */ = {isa = PBXBuildFile; fileRef = 2748112B247DBF3300753335 /* Keplerian.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		27481138247DBF5000753335 /* CelestialBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27481133247DBF5000753335 /* CelestialBody.swift */; };
 		27481139247DBF5000753335 /* Orbit+TestValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27481134247DBF5000753335 /* Orbit+TestValues.swift */; };
@@ -31,6 +34,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		273505B524813C6400542337 /* OrbitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbitTests.swift; sourceTree = "<group>"; };
+		273505B7248149B700542337 /* Orbit+KSP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Orbit+KSP.swift"; sourceTree = "<group>"; };
+		273505B9248149CC00542337 /* CelestialBody+KSP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CelestialBody+KSP.swift"; sourceTree = "<group>"; };
 		27481128247DBF3300753335 /* Keplerian.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Keplerian.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2748112B247DBF3300753335 /* Keplerian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Keplerian.h; sourceTree = "<group>"; };
 		2748112C247DBF3300753335 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -66,6 +72,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		273505BB248149D100542337 /* KSP Bodies */ = {
+			isa = PBXGroup;
+			children = (
+				273505B9248149CC00542337 /* CelestialBody+KSP.swift */,
+				273505B7248149B700542337 /* Orbit+KSP.swift */,
+			);
+			path = "KSP Bodies";
+			sourceTree = "<group>";
+		};
 		2748111E247DBF3300753335 = {
 			isa = PBXGroup;
 			children = (
@@ -96,6 +111,7 @@
 				27481137247DBF5000753335 /* Orbit.swift */,
 				27481135247DBF5000753335 /* Orbit+CustomStringConvertible.swift */,
 				27481134247DBF5000753335 /* Orbit+TestValues.swift */,
+				273505BB248149D100542337 /* KSP Bodies */,
 				2748112C247DBF3300753335 /* Info.plist */,
 			);
 			path = Keplerian;
@@ -105,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				27481150247DBF7200753335 /* KeplerianTests.swift */,
+				273505B524813C6400542337 /* OrbitTests.swift */,
 				27481149247DBF6800753335 /* Info.plist */,
 			);
 			path = KeplerianTests;
@@ -221,6 +238,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2748113A247DBF5000753335 /* Orbit+CustomStringConvertible.swift in Sources */,
+				273505B8248149B700542337 /* Orbit+KSP.swift in Sources */,
 				27481139247DBF5000753335 /* Orbit+TestValues.swift in Sources */,
 				27481138247DBF5000753335 /* CelestialBody.swift in Sources */,
 				27481140247DBF5F00753335 /* Units.swift in Sources */,
@@ -228,6 +246,7 @@
 				2748113E247DBF5700753335 /* VectorMath.swift in Sources */,
 				2748113C247DBF5000753335 /* Orbit.swift in Sources */,
 				27E638ED247F543E0087FB0A /* Porkchop.swift in Sources */,
+				273505BA248149CC00542337 /* CelestialBody+KSP.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,6 +254,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				273505B624813C6400542337 /* OrbitTests.swift in Sources */,
 				27481151247DBF7200753335 /* KeplerianTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

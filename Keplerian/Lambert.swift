@@ -20,7 +20,7 @@ class LambertSolver {
     var prograde = true
     var transferType = 1
     
-    init(position1: Vector3D, position2: Vector3D, dt: Double, mu: Double = CelestialBody.Kerbol.gravitationalParameter) {
+    init(position1: Vector3D, position2: Vector3D, dt: Double, mu: Double = CelestialBody.kerbol.gravitationalParameter) {
         self.pos1 = position1
         self.pos2 = position2
         self.dt = dt

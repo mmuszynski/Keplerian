@@ -15,59 +15,6 @@ extension Double {
 
 class KeplerianTests: XCTestCase {
     
-    func testMeasurementConversion() {
-        let thousand = 1.km
-        let alsoThousand = 1000.meters
-        
-        XCTAssertEqual(thousand, alsoThousand)
-        XCTAssertEqual(thousand.value, 1.0)
-        XCTAssertEqual(alsoThousand.value, 1000.0)
-        
-        XCTAssertEqual(Measurement(value: 1, unit: UnitLength.kilometers).converted(to: UnitLength.meters).value, 1000.0)
-    }
-    
-    func testInitializeByMeasurement() {
-        let sol = CelestialBody(gravitationalParameter: 1.32712440042 * 1e20, radius: 696340)
-
-        let mercuryOrbit = Orbit(semiMajorAxis: (57.91 * 10e6).km,
-                                 eccentricity: 0.2056630,
-                                 meanAnomaly: 174.796.degrees,
-                                 inclination: 7.005.degrees,
-                                 LAN: 48.331.degrees,
-                                 argumentOfPeriapsis: 29.124.degrees,
-                                 centralBody: sol)
-        
-        let equalOrbit = Orbit(semiMajorAxis: 57.91 * 10e9,
-                                 eccentricity: 0.2056630,
-                                 meanAnomaly: 3.050765719,
-                                 inclination: 0.12226031,
-                                 LAN: 48.331,
-                                 argumentOfPeriapsis: 0.508309691,
-                                 centralBody: sol)
-        
-        XCTAssertEqual(mercuryOrbit.semiMajorAxis, equalOrbit.semiMajorAxis, accuracy: 1e-6)
-        XCTAssertEqual(mercuryOrbit.eccentricity, equalOrbit.eccentricity, accuracy: 1e-6)
-        XCTAssertEqual(mercuryOrbit.meanAnomaly, equalOrbit.meanAnomaly, accuracy: 1e-6)
-        XCTAssertEqual(mercuryOrbit.inclination, equalOrbit.inclination, accuracy: 1e-6)
-        XCTAssertEqual(mercuryOrbit.LAN, equalOrbit.LAN, accuracy: 1e-6)
-        XCTAssertEqual(mercuryOrbit.argumentOfPeriapsis, equalOrbit.argumentOfPeriapsis, accuracy: 1e-6)
-    }
-    
-    func testTrivialPlanetPositions() {
-        let sun = CelestialBody(gravitationalParameter: 1000, radius: 1000)
-        let orbit = Orbit(semiMajorAxis: 2000, eccentricity: 0, meanAnomaly: 0, inclination: 0, LAN: 0, argumentOfPeriapsis: 0, centralBody: sun)
-        
-        let initialPosition = Vector3D(x: 2000, y: 0, z: 0)
-        XCTAssertEqual(initialPosition, orbit.cartesian(atTime: 0).position)
-        
-        let eccentricOrbit = Orbit(semiMajorAxis: 2000, eccentricity: 0.5, meanAnomaly: 0, inclination: 0, LAN: 0, argumentOfPeriapsis: 0, centralBody: sun)
-        XCTAssertEqual(initialPosition, orbit.cartesian(atTime: 0).position)
-        
-        let expectedPosition = Vector3D(x: -3000, y: 0, z: 0)
-        let diff = expectedPosition - eccentricOrbit.cartesian(atTime: 8885.765876316733).position
-        XCTAssertEqual(diff.magnitude, 0, accuracy: 1e-6)
-    }
-    
     func testTrivialLambertSolver() {
         let sun = CelestialBody(gravitationalParameter: 1000, radius: 1000)
         let orbit = Orbit(semiMajorAxis: 2000, eccentricity: 0, meanAnomaly: 0, inclination: 0, LAN: 0, argumentOfPeriapsis: 0, centralBody: sun)
@@ -120,16 +67,21 @@ class KeplerianTests: XCTestCase {
     }
     
     func testBodyEquality() {
-        XCTAssertEqual(CelestialBody.Kerbin, .Kerbin)
-        XCTAssertNotEqual(CelestialBody.Kerbin, .Duna)
-        XCTAssertNotEqual(CelestialBody.Kerbol, .Kerbin)
+        XCTAssertEqual(CelestialBody.kerbin, .kerbin)
+        XCTAssertNotEqual(CelestialBody.kerbin, .duna)
+        XCTAssertNotEqual(CelestialBody.kerbol, .kerbin)
     }
     
     func testKerbalPorkchop() {
-        let kerbinToDuna = Porkchop(from: .Kerbin, to: .Duna, leavingAfter: 0)
+        let kerbinToDuna = Porkchop(from: .kerbin, to: .duna, departureWindow: (0, 400))
         measure {
             try! kerbinToDuna.solve()
         }
     }
     
+    func testKerbalPorckchopAccuracy() {
+        let kerbinToDuna = Porkchop(from: .kerbin, to: .duna, departureWindow: (100, 400))
+        try! kerbinToDuna.solve()
+        print(kerbinToDuna.solutionSpace.sorted(by: { $0.dV < $1.dV })[0...10] )
+    }
 }

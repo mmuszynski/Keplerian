@@ -32,12 +32,4 @@ extension Orbit {
         let orbit = Orbit(semiMajorAxis: 6371000 * 0.5 + 50, eccentricity: 0.9999, meanAnomaly: 0.0, inclination: 0.129754841327667, LAN: 30, argumentOfPeriapsis: 30, centralBody: earth)
         return orbit
     }
-    
-    public class var kerbin: Orbit {
-        Orbit(semiMajorAxis: 13599840256 , eccentricity: 0, meanAnomaly: 3.14, inclination: 0, LAN: 0, argumentOfPeriapsis: 0, centralBody: .Kerbol)
-    }
-    
-    public class var duna: Orbit {
-        Orbit(semiMajorAxis: 20726155264, eccentricity: 0.051, meanAnomaly: 3.14, inclination: 0.06, LAN: 135.5, argumentOfPeriapsis: 0, centralBody: .Kerbol)
-    }
 }

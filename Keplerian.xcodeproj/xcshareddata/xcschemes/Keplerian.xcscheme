@@ -37,6 +37,11 @@
                BlueprintName = "KeplerianTests"
                ReferencedContainer = "container:Keplerian.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "KeplerianTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

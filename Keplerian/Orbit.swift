@@ -296,8 +296,8 @@ public class Orbit {
         
         func rz(_ angle: Double) -> simd_double3x3 {
             simd_double3x3([
-                simd_double3( cos(-OMEGA), sin(-OMEGA), 0),
-                simd_double3(-sin(-OMEGA), cos(-OMEGA), 0),
+                simd_double3( cos(angle), sin(angle), 0),
+                simd_double3(-sin(angle), cos(angle), 0),
                 simd_double3( 0,            0,          1)
             ])
         }
@@ -305,8 +305,8 @@ public class Orbit {
         func rx(_ angle: Double) -> simd_double3x3 {
             simd_double3x3([
                 simd_double3(1, 0, 0),
-                simd_double3(0, cos(-i), sin(-i)),
-                simd_double3(0, -sin(-i), cos(-i))
+                simd_double3(0, cos(angle), sin(angle)),
+                simd_double3(0, -sin(angle), cos(angle))
             ])
         }
         

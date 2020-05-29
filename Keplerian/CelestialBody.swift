@@ -28,9 +28,3 @@ public struct CelestialBody: Equatable {
         self.orbit = orbit
     }
 }
-
-extension CelestialBody {
-    static var Kerbol = CelestialBody(gravitationalParameter: 1.1723328e18, radius: 261600000.0)
-    static var Kerbin = CelestialBody(gravitationalParameter: 3.5316000e12, radius: 600000.0, orbit: .kerbin)
-    static var Duna = CelestialBody(gravitationalParameter: 3.0136321e11, radius: 320000.0, orbit: .duna)
-}
