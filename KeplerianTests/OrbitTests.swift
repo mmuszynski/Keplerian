@@ -12,7 +12,7 @@ import XCTest
 class OrbitTests: XCTestCase {
     
     func testInitializeOrbitByMeasurement() {
-        let sol = CelestialBody(gravitationalParameter: 1.32712440042 * 1e20, radius: 696340)
+        let sol = CelestialBody(gravitationalParameter: 1.32712440042 * 1e20, radius: 696340, mass: 0)
 
         let mercuryOrbit = Orbit(semiMajorAxis: (57.91 * 10e6).km,
                                  eccentricity: 0.2056630,
@@ -26,7 +26,7 @@ class OrbitTests: XCTestCase {
                                  eccentricity: 0.2056630,
                                  meanAnomaly: 3.050765719,
                                  inclination: 0.12226031,
-                                 LAN: 48.331,
+                                 LAN: 48.331 * .pi / 180,
                                  argumentOfPeriapsis: 0.508309691,
                                  centralBody: sol)
         
@@ -39,7 +39,7 @@ class OrbitTests: XCTestCase {
     }
     
     func testTrivialPlanetPositions() {
-        let sun = CelestialBody(gravitationalParameter: 1000, radius: 1000)
+        let sun = CelestialBody(gravitationalParameter: 1000, radius: 1000, mass: 1000)
         let orbit = Orbit(semiMajorAxis: 2000, eccentricity: 0, meanAnomaly: 0, inclination: 0, LAN: 0, argumentOfPeriapsis: 0, centralBody: sun)
         
         let initialPosition = Vector3D(x: 2000, y: 0, z: 0)
@@ -56,35 +56,61 @@ class OrbitTests: XCTestCase {
     func testKerbinOrbitFromMattLibrary() {
         let orbit = Orbit.kerbin
         
-        print("testing time since periapsis: \(orbit.timeSincePeriapsis(forTime: 0))")
+        print("testing time since periapsis: \(orbit.timeSincePeriapsis(atTime: 0))")
         XCTAssertEqual(orbit.trueAnomaly(atTime: 0), 179.90874767107852.deg2rad, accuracy: 1e-6)
         XCTAssertEqual(orbit.meanAnomaly(atTime: 0), 179.90874767107852.deg2rad, accuracy: 1e-6)
         XCTAssertEqual(orbit.eccentricAnomaly(atTime: 0), 179.90874767107852.deg2rad, accuracy: 1e-6)
         
         let atPeri = -4599439.396167472
-        print("testing time since periapsis: \(orbit.timeSincePeriapsis(forTime: atPeri))")
+        print("testing time since periapsis: \(orbit.timeSincePeriapsis(atTime: atPeri))")
         XCTAssertEqual(orbit.trueAnomaly(atTime: atPeri), 0, accuracy: 1e-6)
         XCTAssertEqual(orbit.meanAnomaly(atTime: atPeri), 0, accuracy: 1e-6)
         XCTAssertEqual(orbit.eccentricAnomaly(atTime: atPeri), 0, accuracy: 1e-6)
         
         let atRandom = 6123648.12356
-        print("testing time since periapsis: \(orbit.timeSincePeriapsis(forTime: atRandom))")
+        print("testing time since periapsis: \(orbit.timeSincePeriapsis(atTime: atRandom))")
         XCTAssertEqual(orbit.trueAnomaly(atTime: atRandom), 59.437475021205209.deg2rad, accuracy: 1e-6)
         XCTAssertEqual(orbit.meanAnomaly(atTime: atRandom), 59.437475021205209.deg2rad, accuracy: 1e-6)
         XCTAssertEqual(orbit.eccentricAnomaly(atTime: atRandom), 59.437475021205209.deg2rad, accuracy: 1e-6)
+        
+        let kspTime = KSPDate(year: 1, day: 2, hour: 0, minute: 0, second: 0)
+        print("testing time since periapsis: \(orbit.timeSincePeriapsis(atTime: atRandom))")
+        print(orbit.anom(atTime: kspTime.timeIntervalSinceReferenceDate))
+        let E_m_nu_t = [180.7536395404949, 180.7536395404949, 180.7536395404949, 4621039.396167472]
+        XCTAssertEqual(orbit.eccentricAnomaly(atTime: kspTime.timeIntervalSinceReferenceDate).rad2deg, E_m_nu_t[0], accuracy: 1e-6)
+        XCTAssertEqual(orbit.meanAnomaly(atTime: kspTime.timeIntervalSinceReferenceDate).rad2deg, E_m_nu_t[1], accuracy: 1e-6)
+        XCTAssertEqual(orbit.trueAnomaly(atTime: kspTime.timeIntervalSinceReferenceDate).rad2deg, E_m_nu_t[2], accuracy: 1e-6)
+        XCTAssertEqual(orbit.timeSincePeriapsis(atTime: kspTime.timeIntervalSinceReferenceDate), E_m_nu_t[3], accuracy: 1e-6)
+    }
+    
+    
+    func testOrbitEquality() {
+        XCTAssertEqual(Orbit.kerbin, Orbit.kerbin)
+        XCTAssertNotEqual(Orbit.kerbin, Orbit.duna)
+    }
+    
+    func testBodyEquality() {
+        XCTAssertEqual(CelestialBody.kerbin, .kerbin)
+        XCTAssertNotEqual(CelestialBody.kerbin, .duna)
+        XCTAssertNotEqual(CelestialBody.kerbol, .kerbin)
     }
 }
 
-//matt's library expects time sine peri
 private extension Orbit {
-    func timeSincePeriapsis(forTime time: Double) -> Double {
-        let ttpe = self.timeToPeriapsis(atTime: time)
-        return self.period - ttpe
+    func anom(atTime time: Double) -> String {
+        return "anomalies('t', \(self.timeSincePeriapsis(atTime: time)), \(self.semiMajorAxis), \(self.eccentricity), mu=\(self.centralBody.gravitationalParameter))"
+    }
+    
+    func coe(atTime time: Double) -> String {
+        return "\(semiMajorAxis), \(eccentricity), \(inclination), \(LAN), \(argumentOfPeriapsis), \(trueAnomaly(atTime: time) * 180 / .pi), mu=\(centralBody.gravitationalParameter)"
     }
 }
 
 private extension Double {
     var deg2rad: Double {
         return self * .pi / 180
+    }
+    var rad2deg: Double {
+        return self * 180 / .pi
     }
 }

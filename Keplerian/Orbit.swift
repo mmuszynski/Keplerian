@@ -9,7 +9,7 @@
 import Foundation
 import simd
 
-public class Orbit {
+public class Orbit: Codable {
     //The Keplerian Orbital elements
     public var semiMajorAxis: Double
     public var eccentricity: Double
@@ -57,12 +57,11 @@ public class Orbit {
     
     public convenience init(semiMajorAxis: Measurement<UnitLength>, eccentricity: Double, meanAnomaly: Measurement<UnitAngle>, inclination: Measurement<UnitAngle>, LAN: Measurement<UnitAngle>, argumentOfPeriapsis: Measurement<UnitAngle>, centralBody: CelestialBody) {
         
-        
         self.init(semiMajorAxis: semiMajorAxis.converted(to: .meters).value,
                   eccentricity: eccentricity,
                   meanAnomaly: meanAnomaly.converted(to: .radians).value,
                   inclination: inclination.converted(to: .radians).value,
-                  LAN: LAN.converted(to: .degrees).value,
+                  LAN: LAN.converted(to: .radians).value,
                   argumentOfPeriapsis: argumentOfPeriapsis.converted(to: .radians).value,
                   centralBody: centralBody)
     }
@@ -98,13 +97,13 @@ public class Orbit {
     }
     
     public var meanMotion: Double {
-        let gm = centralBody.gravitationalParameter
-        return sqrt(gm / pow(semiMajorAxis, 3))
+        let mu = centralBody.gravitationalParameter
+        return sqrt(mu / pow(semiMajorAxis, 3))
     }
     
     public var period: Double {
-        let gm = centralBody.gravitationalParameter
-        return 2.0 * Double.pi * sqrt(pow(semiMajorAxis, 3) / gm)
+        let mu = centralBody.gravitationalParameter
+        return 2.0 * Double.pi * sqrt(pow(semiMajorAxis, 3) / mu)
     }
     
     public func meanAnomaly(atTime time: Double = 0) -> Double {
@@ -161,12 +160,36 @@ public class Orbit {
     
     private func trueAnomaly(atTimeFromEpoch time: Double = 0) -> Double {
         let E = self.eccentricAnomaly(atTimeFromEpoch: time)
-        let ecc = eccentricity
+        let e = eccentricity
 
+        /* This is nice in an ideal case, but more research has shown that it has a big problem as e -> 1 */
+        /* The denominator becomes zero, and that will trap
         let numerator = cos(E) - ecc
         let denominator = 1 - ecc * cos(E)
         
         return acos(numerator/denominator)
+         
+         
+         Instead, the code from Matt's library (and Wikipedia):
+         
+         sin_nu = (np.sin(E)*np.sqrt(1.-e**2.))/(1.-e*np.cos(E))
+         cos_nu = (np.cos(E)-e)/(1.-e*np.cos(E))
+         nu = np.arctan2(sin_nu,cos_nu)
+         */
+        
+        let sin_nu = (sin(E) * sqrt(1 - e * e)) / (1 - e * cos(E))
+        let cos_nu = (cos(E) - e) / (1 - e * cos(E))
+        var nu = atan2(sin_nu, cos_nu)
+        
+        while nu < 0 {
+            nu += 2 * .pi
+        }
+        
+        while nu >= .pi * 2 {
+            nu -= 2 * .pi
+        }
+        
+        return nu
     }
     
     public func radius(atTime time: Double = 0) -> Double {
@@ -183,9 +206,9 @@ public class Orbit {
     }
     
     private func orbitalSpeed(atTimeFromEpoch time: Double = 0) -> Double {
-        let gm = centralBody.gravitationalParameter
+        let mu = centralBody.gravitationalParameter
         let radius = self.radius(atTimeFromEpoch: time)
-        return sqrt(gm * (2.0 / radius - 1 / self.semiMajorAxis))
+        return sqrt(mu * (2.0 / radius - 1 / self.semiMajorAxis))
     }
     
     public func timeToApoapsis(atTime time: Double = 0) -> Double {
@@ -218,12 +241,17 @@ public class Orbit {
         return period * meanAnomalyFractionRemaining
     }
     
+    public func timeSincePeriapsis(atTime time: Double) -> Double {
+        let ttpe = self.timeToPeriapsis(atTime: time)
+        return self.period - ttpe
+    }
+    
     public var specificAngularMomentum: Double {
-        let gm = centralBody.gravitationalParameter
+        let mu = centralBody.gravitationalParameter
         let a = semiMajorAxis
         let e = eccentricity
         
-        return sqrt(gm * a * (1 - e * e))
+        return sqrt(mu * a * (1 - e * e))
     }
     
     public func cartesianPosition(atTime time: Double = 0) -> Vector3D {
@@ -237,8 +265,8 @@ public class Orbit {
         
         let r = radius(atTimeFromEpoch: time)
         let nu = trueAnomaly(atTimeFromEpoch: time)
-        let x = r * (cos(rad(from: LAN)) * cos(nu + argumentOfPeriapsis) - sin(rad(from: LAN)) * sin(nu + argumentOfPeriapsis) * cos(inclination))
-        let y = r * (sin(rad(from: LAN)) * cos(nu + argumentOfPeriapsis) + cos(rad(from: LAN)) * sin(nu + argumentOfPeriapsis) * cos(inclination))
+        let x = r * (cos(LAN) * cos(nu + argumentOfPeriapsis) - sin(LAN) * sin(nu + argumentOfPeriapsis) * cos(inclination))
+        let y = r * (sin(LAN) * cos(nu + argumentOfPeriapsis) + cos(LAN) * sin(nu + argumentOfPeriapsis) * cos(inclination))
         let z = r * sin(inclination) * sin(nu + argumentOfPeriapsis)
         return Vector3D(x: x, y: y, z: z)
     }
@@ -261,9 +289,9 @@ public class Orbit {
         //    mu = 398600.4415
 
         let i = inclination
-        let OMEGA = rad(from: LAN)
+        let OMEGA = LAN
         let omega = argumentOfPeriapsis
-        let nu = trueAnomaly(atTimeFromEpoch: time)
+        let nu = trueAnomaly(atTime: timeFromEpoch(for: time))
         let e = eccentricity
         let mu = self.centralBody.gravitationalParameter
         
@@ -310,9 +338,13 @@ public class Orbit {
             ])
         }
         
-        let pqw2ijk = rz(-OMEGA) * rx(-i) * rz(-omega)
-        let r_ijk = pqw2ijk * r_pqw_simd
-        let v_ijk = pqw2ijk * v_pqw_simd
+        let rot1 = rz(-OMEGA)
+        let rot2 = rx(-i)
+        let rot3 = rz(-omega)
+        
+        let pqw2ijk = rot3 * rot2 * rot1
+        let r_ijk = r_pqw_simd * pqw2ijk
+        let v_ijk = v_pqw_simd * pqw2ijk 
                 
         //pqw2ijk = rz(-OMEGA).dot(rx(-i).dot(rz(-omega)))
         //r_ijk = pqw2ijk.dot(r_pqw)

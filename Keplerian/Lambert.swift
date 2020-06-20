@@ -12,26 +12,60 @@ typealias LambertSolution = (Vector3D, Vector3D, Double)
 
 class LambertSolver {
     
+    enum ConfigurationError: Error {
+        case invalidOrbits
+    }
+    
     var mu: Double
-    var pos1: Vector3D
-    var pos2: Vector3D
+    var position1: Vector3D
+    var velocity1: Vector3D?
+    var position2: Vector3D
+    var velocity2: Vector3D?
     var dt: Double
     var maxRevs: Int = 0
     var prograde = true
     var transferType = 1
     
+    var debug = true
+    
     init(position1: Vector3D, position2: Vector3D, dt: Double, mu: Double = CelestialBody.kerbol.gravitationalParameter) {
-        self.pos1 = position1
-        self.pos2 = position2
+        self.position1 = position1
+        self.position2 = position2
         self.dt = dt
         self.mu = mu
     }
     
-    func solve() ->  [LambertSolution] {
-        return attempt4()
+    init(orbit1: Orbit, orbit2: Orbit, departureTime: KSPDate, travelTime: Double) throws {
+        guard orbit1.centralBody == orbit2.centralBody else { throw ConfigurationError.invalidOrbits }
+        let arrivalTime = departureTime.timeIntervalSinceReferenceDate + travelTime
+    
+        self.mu = orbit1.centralBody.gravitationalParameter
+        (self.position1, self.velocity1) = orbit1.cartesian(atTime: Double(departureTime.timeIntervalSinceReferenceDate))
+        (self.position2, self.velocity2) = orbit2.cartesian(atTime: Double(arrivalTime))
+        
+        self.dt = Double(travelTime)
+        
+        
+        if debug {
+            print("******INITIALIZING LAMBERT SOLVER*********")
+            print("travel time:  \(dt)")
+            print("mu:           \(mu)")
+            print("departure:    [\(position1.x), \(position1.y), \(position1.z), \(velocity1?.x ?? 0), \(velocity1?.y ?? 0), \(velocity1?.z ?? 0)]")
+            print("arrival:      [\(position2.x), \(position2.y), \(position2.z), \(velocity2?.x ?? 0), \(velocity2?.y ?? 0), \(velocity2?.z ?? 0)]")
+            print("lambert([\(position1.x), \(position1.y), \(position1.z), \(velocity1?.x ?? 0), \(velocity1?.y ?? 0), \(velocity1?.z ?? 0)], [\(position2.x), \(position2.y), \(position2.z), \(velocity2?.x ?? 0), \(velocity2?.y ?? 0), \(velocity2?.z ?? 0)], \(dt), mu=\(mu))")
+            print("******************************************")
+        }
     }
     
-    private func attempt4() -> [LambertSolution] {
+    func solve() ->  [LambertSolution] {
+        return mattsLambertSovlerFromCU()
+    }
+    
+    private func mattsLambertSovlerFromCU(debug: Bool = false) -> [LambertSolution] {
+        if debug {
+            print("lambert([\(position1.x),\(position1.y),\(position1.z), \(velocity1!.x),\(velocity1!.y),\(velocity1!.z)], [\(position2.x),\(position2.y),\(position2.z),\(velocity2!.x),\(velocity2!.y),\(velocity2!.z)], \(dt), mu=\(mu))")
+        }
+        
         /*
          #------------------------------------------------------------------
          # lambert()
@@ -61,13 +95,13 @@ class LambertSolver {
          
          */
         
-        let r_0 = self.pos1
-        let r_f = self.pos2
-        let n0 = self.pos1.normalized
-        let nf = self.pos2.normalized
+        let r_0 = self.position1
+        let r_f = self.position2
+        let n0 = self.position1.normalized
+        let nf = self.position2.normalized
         
-        let r0 = self.pos1.magnitude
-        let rf = self.pos2.magnitude
+        let r0 = self.position1.magnitude
+        let rf = self.position2.magnitude
         
         let sqrtMu = sqrt(mu)
         let dt0 = self.dt

@@ -15,73 +15,52 @@ extension Double {
 
 class KeplerianTests: XCTestCase {
     
-    func testTrivialLambertSolver() {
-        let sun = CelestialBody(gravitationalParameter: 1000, radius: 1000)
-        let orbit = Orbit(semiMajorAxis: 2000, eccentricity: 0, meanAnomaly: 0, inclination: 0, LAN: 0, argumentOfPeriapsis: 0, centralBody: sun)
+    func testAlexMoon() {
+        /*
+         https://alexmoon.github.io/ksp/#/Kerbin/0/Duna/0/false/ballistic/false/1/1
+         Github user alexmoon has a detailed chart for this stuff.
+         Can I match up the DV with what he suggests is possible for the trip?
+         
+         Let's use the lambert solver and see whether it matches up
+         */
         
-        let initial = orbit.cartesianPosition(atTime: 0)
-        let final = orbit.cartesianPosition(atTime: orbit.period / 4.0)
-
-        let solver = LambertSolver(position1: initial, position2: final, dt: 1000)
-        let solutions = solver.solve()
-    }
-    
-    func testLambertSolver() {
-        let position1 = Vector3D(x: 147084764.907217, y: -32521189.6497507, z: 467.190091409394)
-        let position2 = Vector3D(x: -88002509.1583767, y: -62680223.1330849, z: 4220331.52492018)
+        //Year 1, day 231 at 0:14:24
+        let departrureDate = KSPDate(year: 1, day: 231, hour: 0, minute: 14, second: 24)
         
-        let solver = LambertSolver(position1: position1, position2: position2, dt: (2455610-2455450)*86400, mu: 1.32712440018e11)
-        let solutions = solver.solve()
+        //Year 2, day 74 at 4:57:36
+        let arrivalDate = KSPDate(year: 2, day: 74, hour: 4, minute: 57, second: 36)
         
-        guard !solutions.isEmpty else {
-            XCTFail("No solutions found")
-            return
-        }
         
-        XCTAssertEqual(solutions[0].0.x, 4.65144349746008, accuracy: 1e-5)
-        XCTAssertEqual(solutions[0].0.y, 26.0824144093203, accuracy: 1e-5)
-        XCTAssertEqual(solutions[0].0.z, -1.39306043231699, accuracy: 1e-5)
-        XCTAssertEqual(solutions[0].1.x, 16.7926204519414, accuracy: 1e-5)
-        XCTAssertEqual(solutions[0].1.y, -33.3516748429805, accuracy: 1e-5)
-        XCTAssertEqual(solutions[0].1.z, 1.52302150358741, accuracy: 1e-5)
-    }
-    
-    func testLambertSolver2() {
-        let position1 = Vector3D(x: 170145121.321308, y: -117637192.836034, z: -6642044.2724648)
-        let position2 = Vector3D(x: -803451694.669228, y: 121525767.116065, z: 17465211.7766441)
+        let solver = try! LambertSolver(orbit1: .kerbin, orbit2: .duna, departureTime: departrureDate, travelTime: arrivalDate.timeIntervalSinceReferenceDate - departrureDate.timeIntervalSinceReferenceDate)
         
-        let solver = LambertSolver(position1: position1, position2: position2, dt: (2457500-2456300)*86400, mu: 1.32712440018e11)
-        let solutions = solver.solve()
-                
-        XCTAssertEqual(solutions[0].0.x, 13.7407773577481, accuracy: 1e-5)
-        XCTAssertEqual(solutions[0].0.y, 28.8309931231422, accuracy: 1e-5)
-        XCTAssertEqual(solutions[0].0.z, 0.691285008034955, accuracy: 1e-5)
-        XCTAssertEqual(solutions[0].1.x, -0.883933068957334, accuracy: 1e-5)
-        XCTAssertEqual(solutions[0].1.y, -7.98362701426338, accuracy: 1e-5)
-        XCTAssertEqual(solutions[0].1.z, -0.240770597841448, accuracy: 1e-5)
+        let (departureVelocity, arrivalVelocity, _) = solver.solve()[0]
+        let vinf_departure = departureVelocity - Orbit.kerbin.cartesian(atTime: departrureDate.timeIntervalSinceReferenceDate).velocity
+        let vinf_arrival = arrivalVelocity - Orbit.duna.cartesian(atTime: arrivalDate.timeIntervalSinceReferenceDate).velocity
+        
+        print((vinf_arrival + vinf_departure).magnitude)
     }
     
-    func testOrbitEquality() {
-        XCTAssertEqual(Orbit.kerbin, Orbit.kerbin)
-        XCTAssertNotEqual(Orbit.kerbin, Orbit.duna)
-    }
-    
-    func testBodyEquality() {
-        XCTAssertEqual(CelestialBody.kerbin, .kerbin)
-        XCTAssertNotEqual(CelestialBody.kerbin, .duna)
-        XCTAssertNotEqual(CelestialBody.kerbol, .kerbin)
-    }
-    
-    func testKerbalPorkchop() {
-        let kerbinToDuna = Porkchop(from: .kerbin, to: .duna, departureWindow: (0, 400))
-        measure {
-            try! kerbinToDuna.solve()
-        }
-    }
-    
-    func testKerbalPorckchopAccuracy() {
-        let kerbinToDuna = Porkchop(from: .kerbin, to: .duna, departureWindow: (100, 400))
-        try! kerbinToDuna.solve()
-        print(kerbinToDuna.solutionSpace.sorted(by: { $0.dV < $1.dV })[0...10] )
+//    func testKerbalPorckchopAccuracy() {
+//        let window = (KSPDate(year: 1, day: 100),
+//                      KSPDate(year: 1, day: 300))
+//        
+//        let kerbinToDuna = Porkchop(from: .kerbin, to: .duna, departureWindow: window)
+//        try! kerbinToDuna.solve()
+//        print(kerbinToDuna.solutionSpace.sorted(by: { $0.dV < $1.dV }).first)
+//    }
+//    
+//    func testKerbalPorckchopAccuracySecondWindow() {
+//        let window = (KSPDate(year: 1, day: 900),
+//                      KSPDate(year: 1, day: 1200))
+//        
+//        let kerbinToDuna = Porkchop(from: .kerbin, to: .duna, departureWindow: window)
+//        try! kerbinToDuna.solve()
+//        print(kerbinToDuna.solutionSpace.sorted(by: { $0.dV < $1.dV }).first)
+//    }
+//    
+    func testPorkchopToEve() {
+        let window = (KSPDate(year: 1, day: 0), KSPDate(year: 1, day: 852))
+        let chop = Porkchop(from: .kerbin, to: .eve, departureWindow: window)
+        try! chop.solve()
     }
 }

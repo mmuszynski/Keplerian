@@ -20,6 +20,11 @@
 		27481140247DBF5F00753335 /* Units.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2748113F247DBF5E00753335 /* Units.swift */; };
 		2748114A247DBF6800753335 /* Keplerian.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27481128247DBF3300753335 /* Keplerian.framework */; };
 		27481151247DBF7200753335 /* KeplerianTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27481150247DBF7200753335 /* KeplerianTests.swift */; };
+		2760D7F1248EBC7700E96A7C /* CelestialBodyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2760D7F0248EBC7700E96A7C /* CelestialBodyTests.swift */; };
+		27CD2D24248ACAD3008C148F /* PorkchopVisualizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CD2D23248ACAD3008C148F /* PorkchopVisualizer.swift */; };
+		27DBA5B62482F8900074B4DA /* KerbalTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27DBA5B52482F8900074B4DA /* KerbalTime.swift */; };
+		27DBA5B824835E950074B4DA /* LambertTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27DBA5B724835E950074B4DA /* LambertTests.swift */; };
+		27DBA5BA248364160074B4DA /* KSPDateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27DBA5B9248364160074B4DA /* KSPDateTests.swift */; };
 		27E638ED247F543E0087FB0A /* Porkchop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E638EC247F543E0087FB0A /* Porkchop.swift */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +55,12 @@
 		27481145247DBF6800753335 /* KeplerianTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KeplerianTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		27481149247DBF6800753335 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		27481150247DBF7200753335 /* KeplerianTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeplerianTests.swift; sourceTree = "<group>"; };
+		2760D7F0248EBC7700E96A7C /* CelestialBodyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelestialBodyTests.swift; sourceTree = "<group>"; };
+		27CD2D23248ACAD3008C148F /* PorkchopVisualizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PorkchopVisualizer.swift; sourceTree = "<group>"; };
+		27CD2D26248AD417008C148F /* KeplerianPlayspace.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = KeplerianPlayspace.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		27DBA5B52482F8900074B4DA /* KerbalTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KerbalTime.swift; sourceTree = "<group>"; };
+		27DBA5B724835E950074B4DA /* LambertTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LambertTests.swift; sourceTree = "<group>"; };
+		27DBA5B9248364160074B4DA /* KSPDateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KSPDateTests.swift; sourceTree = "<group>"; };
 		27E638EC247F543E0087FB0A /* Porkchop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Porkchop.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +95,7 @@
 		2748111E247DBF3300753335 = {
 			isa = PBXGroup;
 			children = (
+				27CD2D26248AD417008C148F /* KeplerianPlayspace.playground */,
 				2748112A247DBF3300753335 /* Keplerian */,
 				27481146247DBF6800753335 /* KeplerianTests */,
 				27481129247DBF3300753335 /* Products */,
@@ -104,10 +116,12 @@
 			children = (
 				2748112B247DBF3300753335 /* Keplerian.h */,
 				2748113F247DBF5E00753335 /* Units.swift */,
+				27DBA5B52482F8900074B4DA /* KerbalTime.swift */,
 				2748113D247DBF5700753335 /* VectorMath.swift */,
 				27481133247DBF5000753335 /* CelestialBody.swift */,
 				27481136247DBF5000753335 /* Lambert.swift */,
 				27E638EC247F543E0087FB0A /* Porkchop.swift */,
+				27CD2D23248ACAD3008C148F /* PorkchopVisualizer.swift */,
 				27481137247DBF5000753335 /* Orbit.swift */,
 				27481135247DBF5000753335 /* Orbit+CustomStringConvertible.swift */,
 				27481134247DBF5000753335 /* Orbit+TestValues.swift */,
@@ -122,6 +136,9 @@
 			children = (
 				27481150247DBF7200753335 /* KeplerianTests.swift */,
 				273505B524813C6400542337 /* OrbitTests.swift */,
+				2760D7F0248EBC7700E96A7C /* CelestialBodyTests.swift */,
+				27DBA5B724835E950074B4DA /* LambertTests.swift */,
+				27DBA5B9248364160074B4DA /* KSPDateTests.swift */,
 				27481149247DBF6800753335 /* Info.plist */,
 			);
 			path = KeplerianTests;
@@ -243,10 +260,12 @@
 				27481138247DBF5000753335 /* CelestialBody.swift in Sources */,
 				27481140247DBF5F00753335 /* Units.swift in Sources */,
 				2748113B247DBF5000753335 /* Lambert.swift in Sources */,
+				27DBA5B62482F8900074B4DA /* KerbalTime.swift in Sources */,
 				2748113E247DBF5700753335 /* VectorMath.swift in Sources */,
 				2748113C247DBF5000753335 /* Orbit.swift in Sources */,
 				27E638ED247F543E0087FB0A /* Porkchop.swift in Sources */,
 				273505BA248149CC00542337 /* CelestialBody+KSP.swift in Sources */,
+				27CD2D24248ACAD3008C148F /* PorkchopVisualizer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,8 +273,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27DBA5BA248364160074B4DA /* KSPDateTests.swift in Sources */,
 				273505B624813C6400542337 /* OrbitTests.swift in Sources */,
 				27481151247DBF7200753335 /* KeplerianTests.swift in Sources */,
+				27DBA5B824835E950074B4DA /* LambertTests.swift in Sources */,
+				2760D7F1248EBC7700E96A7C /* CelestialBodyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
