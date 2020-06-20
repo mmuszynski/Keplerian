@@ -108,7 +108,7 @@ public class Porkchop {
                     
                     let r0 = mu / (v0 * v0)
                     let e = r0 * v1 * v1 / mu - 1
-                    let ap = r0 * (1 + e)
+                    let _ = r0 * (1 + e)
                     
                     if relativeInclination == 0 {
                         return v1 - v0

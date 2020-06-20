@@ -73,7 +73,7 @@ public struct KSPDate {
 extension KSPDate: CustomStringConvertible {
     public var description: String {
         let formatter = NumberFormatter()
-        formatter.format = "00"
+        formatter.positiveFormat = "00"
         return "KSPDate: Year \(Int(self.year.value)), Day \(Int(self.day.value)) " +
                 "\(formatter.string(from: NSNumber(value: self.hour.value))!):" +
                 "\(formatter.string(from: NSNumber(value: self.minute.value))!):" +
