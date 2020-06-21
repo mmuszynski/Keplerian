@@ -316,6 +316,12 @@ public class Orbit: Codable {
     private func timeToPeriapsis(atTimeFromEpoch time: Double = 0) -> Double {
         let effectiveMeanAnomaly = self.meanAnomaly(atTimeFromEpoch: time)
         
+        if self.isHyperbolic {
+            let meanAnomalyAtPeriapsis = 0.0
+            let time = (effectiveMeanAnomaly - meanAnomalyAtPeriapsis) / meanMotion
+            return time
+        }
+        
         let meanAnomalyFractionRemaining = (2.0 * Double.pi - effectiveMeanAnomaly) / (2.0 * Double.pi)
         let period = self.period
         
