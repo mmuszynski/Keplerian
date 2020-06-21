@@ -117,12 +117,12 @@ public class Orbit: Codable {
     
     /// The maximum distance from the center of mass of the body that is being orbited
     public var apoapsis: Double {
-        return (1 + eccentricity) * semiMajorAxis
+        return a * (1 + e)
     }
     
     /// The minimum distance from the center of mass of the body that is being orbited
     public var periapsis: Double {
-        return (1 - eccentricity) * semiMajorAxis
+        return a * (1 - e)
     }
     
     /// The minimum altitude from the average surface of the body being orbited
@@ -237,8 +237,11 @@ public class Orbit: Codable {
     }
     
     private func trueAnomaly(atTimeFromEpoch time: Double = 0) -> Double {
-        let E = self.eccentricAnomaly(atTimeFromEpoch: time)
-        let e = eccentricity
+        let meanAnomaly = self.meanAnomaly(atTimeFromEpoch: time)
+        var E = self.eccentricAnomaly(atTimeFromEpoch: time)
+        if self.isHyperbolic {
+             E = self.hyperbolicAnomaly(fromMeanAnomaly: meanAnomaly)
+        }
 
         /* This is nice in an ideal case, but more research has shown that it has a big problem as e -> 1 */
         /* The denominator becomes zero, and that will trap
@@ -276,7 +279,7 @@ public class Orbit: Codable {
     
     private func radius(atTimeFromEpoch time: Double = 0) -> Double {
         let trueAnomaly = self.trueAnomaly(atTimeFromEpoch: time)
-        return semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * cos(trueAnomaly))
+        return p / (1 + e * cos(trueAnomaly))
     }
     
     public func orbitalSpeed(atTime time: Double = 0) -> Double {

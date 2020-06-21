@@ -54,7 +54,7 @@
 		27481149247DBF6800753335 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		27481150247DBF7200753335 /* KeplerianTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeplerianTests.swift; sourceTree = "<group>"; };
 		2760D7F0248EBC7700E96A7C /* CelestialBodyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelestialBodyTests.swift; sourceTree = "<group>"; };
-		278FD86E249EA09B00DD7A01 /* Units.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Units.swift; path = ../../../../Desktop/OrbitView.playground/Sources/Units.swift; sourceTree = "<group>"; };
+		278FD86E249EA09B00DD7A01 /* Units.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Units.swift; sourceTree = "<group>"; };
 		27CD2D23248ACAD3008C148F /* PorkchopVisualizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PorkchopVisualizer.swift; sourceTree = "<group>"; };
 		27CD2D26248AD417008C148F /* KeplerianPlayspace.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = KeplerianPlayspace.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		27DBA5B52482F8900074B4DA /* KerbalTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KerbalTime.swift; sourceTree = "<group>"; };
