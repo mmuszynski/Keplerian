@@ -9,7 +9,11 @@
 import Foundation
 import simd
 
+//http://www.bogan.ca/orbits/kepler/orbteqtn.html
+
 public class Orbit: Codable {
+    
+    //-MARK: Classcal Orbital Elements
     //The Keplerian Orbital elements
     public var semiMajorAxis: Double
     public var eccentricity: Double
@@ -18,6 +22,7 @@ public class Orbit: Codable {
     public var LAN: Double
     public var argumentOfPeriapsis: Double
     
+    //-MARK: Epoch
     //Epoch for KSP has been zero for all orbits
     //Generally, this probably needs to be specified
     public var epoch: Double = 0
@@ -27,13 +32,19 @@ public class Orbit: Codable {
     
     public var centralBody: CelestialBody
     
+    //-MARK: Orbit Descriptions
+    /// Whether or not the orbit is going to clear the body's radius
     public var isSubOrbital: Bool {
+        #warning("This is probably incorrect for non-elliptical orbits")
         return self.semiMajorAxis < self.centralBody.radius
     }
     
-    public var isEscapeOrbit: Bool {
+    /// If the orbit is hyperbolic
+    public var isHyperbolic: Bool {
         return self.eccentricity >= 1.0
     }
+    
+    //-MARK: Initialization
     
     /// Initializes an `Orbit` with the prescribed Keplerian orbital elements
     ///
@@ -66,6 +77,44 @@ public class Orbit: Codable {
                   centralBody: centralBody)
     }
     
+    //-MARK: Alias functions
+    
+    /// An alias for the eccentricity of the orbit
+    private var e: Double {
+        return eccentricity
+    }
+    
+    /// An alias for the semi-major axis
+    private var a: Double {
+        return semiMajorAxis
+    }
+    
+    /// The gravitational parameter of the central body
+    private var mu: Double {
+        return centralBody.gravitationalParameter
+    }
+    
+    /// An alias for the total energy of the orbit
+    private var E: Double {
+        return totalEnergy
+    }
+    
+    private var p: Double {
+        return parameter
+    }
+    
+    //-MARK: Calculated parameters
+    
+    /// The parameter, aka semi-latus rectum
+    private var parameter: Double {
+        return a * (1 - e)
+    }
+    
+    /// The total energy of the orbit
+    private var totalEnergy: Double {
+        return -mu/(2 * a)
+    }
+    
     /// The maximum distance from the center of mass of the body that is being orbited
     public var apoapsis: Double {
         return (1 + eccentricity) * semiMajorAxis
@@ -76,29 +125,58 @@ public class Orbit: Codable {
         return (1 - eccentricity) * semiMajorAxis
     }
     
+    /// The minimum altitude from the average surface of the body being orbited
     public var periapsisAltitude: Double {
         return periapsis - centralBody.radius
     }
     
+    /// The maximum altitude from the average surface of the body being orbited
     public var apoapsisAltitude: Double {
         return apoapsis - centralBody.radius
     }
     
+    /// The altitude at a given time for a given orbit
     public func altitude(atTime time: Double = 0) -> Double {
         return altitude(atTimeFromEpoch: timeFromEpoch(for: time))
     }
     
+    /// The altitude at a given time since the epoch of the orbit
     private func altitude(atTimeFromEpoch time: Double = 0) -> Double {
         return radius(atTimeFromEpoch: time) - centralBody.radius
     }
-    
+
+    /// The semi-minor axis of the orbit
     public var semiMinorAxis: Double {
         return semiMajorAxis * sqrt(1.0 - eccentricity * eccentricity)
     }
     
     public var meanMotion: Double {
         let mu = centralBody.gravitationalParameter
-        return sqrt(mu / pow(semiMajorAxis, 3))
+
+        if semiMajorAxis < 0 {
+            return sqrt(mu / pow(-semiMajorAxis, 3))
+        } else {
+            return sqrt(mu / pow(semiMajorAxis, 3))
+        }
+    }
+    
+    public func hyperbolicAnomaly(fromMeanAnomaly M: Double) -> Double {
+        let tolerance = 0.0005
+        let eccentricity = self.eccentricity
+        
+        //need to solve M = e * sinh(H) - H
+        
+        var H: Double = M
+        
+        var delta = Double.greatestFiniteMagnitude
+        
+        while abs(delta) > tolerance {
+            let h1 = H + (M - eccentricity * sinh(H) + H) / (eccentricity * cosh(H) - 1)
+            delta = h1 - H
+            H = h1
+        }
+        
+        return H
     }
     
     public var period: Double {

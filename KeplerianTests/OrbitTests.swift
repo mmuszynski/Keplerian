@@ -94,6 +94,12 @@ class OrbitTests: XCTestCase {
         XCTAssertNotEqual(CelestialBody.kerbin, .duna)
         XCTAssertNotEqual(CelestialBody.kerbol, .kerbin)
     }
+    
+    func testHyperbolicOrbit() {
+        let orbit = Orbit(semiMajorAxis: (-700000.0).meters, eccentricity: 1.25, meanAnomaly: 0.0.rad, inclination: 0.0.rad, LAN: 0.0.rad, argumentOfPeriapsis: 0.0.rad, centralBody: .kerbin)
+        print(orbit.hyperbolicAnomaly)
+        XCTAssertEqual(orbit.timeToPeriapsis(), 0, accuracy: 1e-5)
+    }
 }
 
 private extension Orbit {

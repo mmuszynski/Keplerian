@@ -95,8 +95,8 @@ class LambertSolver {
          
          */
         
-        let r_0 = self.position1
-        let r_f = self.position2
+        //let r_0 = self.position1
+        //let r_f = self.position2
         let n0 = self.position1.normalized
         let nf = self.position2.normalized
         
@@ -122,8 +122,8 @@ class LambertSolver {
         //nu_f = arctan2(nf[1],nf[0])
         //delta_nu = nu_f - nu_0
 
-        var nu_0 = atan2(n0.y, n0.x)
-        var nu_f = atan2(nf.y, nf.x)
+        let nu_0 = atan2(n0.y, n0.x)
+        let nu_f = atan2(nf.y, nf.x)
         var delta_nu = nu_f - nu_0
         
         /*if delta_nu < 0:
