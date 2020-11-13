@@ -97,13 +97,21 @@ class OrbitTests: XCTestCase {
     
     func testHyperbolicOrbit() {
         let orbit = Orbit(semiMajorAxis: (-700000.0).meters, eccentricity: 1.25, meanAnomaly: 0.0.rad, inclination: 0.0.rad, LAN: 0.0.rad, argumentOfPeriapsis: 0.0.rad, centralBody: .kerbin)
-        XCTAssertEqual(orbit.timeToPeriapsis(), 0, accuracy: 1e-5)
-        XCTAssertEqual(orbit.timeToPeriapsis(atTime: 10), -10, accuracy: 1e-5)
-        XCTAssertEqual(orbit.timeToPeriapsis(atTime: -10), 10, accuracy: 1e-5)
         
-        for time in stride(from: 0.0, to: 100, by: 1) {
-            print(orbit.meanAnomaly(atTime: time))
-        }
+        XCTAssertGreaterThan(orbit.eccentricity, 1)
+        XCTAssertLessThan(orbit.semiMajorAxis, 0)
+        XCTAssertEqual(orbit.periapsis, orbit.semiMajorAxis * (1 - orbit.eccentricity))
+        XCTAssertEqual(orbit.parameter, orbit.semiMajorAxis * (1 - orbit.eccentricity * orbit.eccentricity))
+        XCTAssertEqual(orbit.totalEnergy, -orbit.centralBody.gravitationalParameter / (2 * orbit.semiMajorAxis))
+        
+        //http://control.asu.edu/Classes/MAE462/462Lecture05.pdf
+        //Given time, t, solve for Hyperbolic Mean Anomaly
+        let M = orbit.meanAnomaly(atTime: 0)
+        let H = orbit.hyperbolicAnomaly(fromMeanAnomaly: M)
+        
+        
+        print(orbit.radius())
+        print(orbit.periapsis)
     }
 }
 

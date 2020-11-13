@@ -106,12 +106,12 @@ public class Orbit: Codable {
     //-MARK: Calculated parameters
     
     /// The parameter, aka semi-latus rectum
-    private var parameter: Double {
-        return a * (1 - e)
+    var parameter: Double {
+        return a * (1 - e * e)
     }
     
     /// The total energy of the orbit
-    private var totalEnergy: Double {
+    var totalEnergy: Double {
         return -mu/(2 * a)
     }
     
@@ -240,7 +240,8 @@ public class Orbit: Codable {
         let meanAnomaly = self.meanAnomaly(atTimeFromEpoch: time)
         var E = self.eccentricAnomaly(atTimeFromEpoch: time)
         if self.isHyperbolic {
-             E = self.hyperbolicAnomaly(fromMeanAnomaly: meanAnomaly)
+            E = self.hyperbolicAnomaly(fromMeanAnomaly: meanAnomaly)
+            return 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(E / 2))
         }
 
         /* This is nice in an ideal case, but more research has shown that it has a big problem as e -> 1 */
@@ -279,6 +280,11 @@ public class Orbit: Codable {
     
     private func radius(atTimeFromEpoch time: Double = 0) -> Double {
         let trueAnomaly = self.trueAnomaly(atTimeFromEpoch: time)
+        
+        if self.isHyperbolic {
+            return a * (1 - e * cosh(trueAnomaly))
+        }
+        
         return p / (1 + e * cos(trueAnomaly))
     }
     
@@ -317,6 +323,7 @@ public class Orbit: Codable {
         let effectiveMeanAnomaly = self.meanAnomaly(atTimeFromEpoch: time)
         
         if self.isHyperbolic {
+            let hyperbolicAnomaly = self.hyperbolicAnomaly(fromMeanAnomaly: effectiveMeanAnomaly)
             let meanAnomalyAtPeriapsis = 0.0
             let time = (effectiveMeanAnomaly - meanAnomalyAtPeriapsis) / meanMotion
             return time
