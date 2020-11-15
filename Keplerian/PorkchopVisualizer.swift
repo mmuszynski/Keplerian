@@ -6,6 +6,7 @@
 //  Copyright © 2020 Mike Muszynski. All rights reserved.
 //
 
+#if !os(iOS)
 import Cocoa
 import Accelerate
 
@@ -101,3 +102,4 @@ public class PorkchopView: NSView {
         }
     }
 }
+#endif
