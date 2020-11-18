@@ -9,35 +9,35 @@
 import Foundation
 
 extension Double {
-    var meters: Measurement<UnitLength> {
+    public var meters: Measurement<UnitLength> {
         Measurement(value: self, unit: UnitLength.meters)
     }
     
-    var m: Measurement<UnitLength> {
+    public var m: Measurement<UnitLength> {
         meters
     }
 
-    var kilometers: Measurement<UnitLength> {
+    public var kilometers: Measurement<UnitLength> {
         Measurement(value: self, unit: UnitLength.kilometers)
     }
     
-    var km: Measurement<UnitLength> {
+    public var km: Measurement<UnitLength> {
         kilometers
     }
     
-    var radians: Measurement<UnitAngle> {
+    public var radians: Measurement<UnitAngle> {
         Measurement(value: self, unit: UnitAngle.radians)
     }
     
-    var rad: Measurement<UnitAngle> {
+    public var rad: Measurement<UnitAngle> {
         radians
     }
     
-    var degrees: Measurement<UnitAngle> {
+    public var degrees: Measurement<UnitAngle> {
         Measurement(value: self, unit: UnitAngle.degrees)
     }
     
-    var deg: Measurement<UnitAngle> {
+    public var deg: Measurement<UnitAngle> {
         degrees
     }
 }
