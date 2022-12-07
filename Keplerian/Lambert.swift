@@ -28,7 +28,7 @@ class LambertSolver {
     
     var debug = true
     
-    init(position1: Vector3D, position2: Vector3D, dt: Double, mu: Double = CelestialBody.kerbol.gravitationalParameter) {
+    init(position1: Vector3D, position2: Vector3D, dt: Double, mu: Double = 1.1723328e18) {
         self.position1 = position1
         self.position2 = position2
         self.dt = dt
