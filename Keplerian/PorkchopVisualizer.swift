@@ -6,7 +6,7 @@
 //  Copyright © 2020 Mike Muszynski. All rights reserved.
 //
 
-#if !os(iOS)
+#if os(macOS)
 import Cocoa
 import Accelerate
 
