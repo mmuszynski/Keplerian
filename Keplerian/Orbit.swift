@@ -244,20 +244,20 @@ public class Orbit: Codable {
             return 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(E / 2))
         }
 
-        /* This is nice in an ideal case, but more research has shown that it has a big problem as e -> 1 */
-        /* The denominator becomes zero, and that will trap
-        let numerator = cos(E) - ecc
-        let denominator = 1 - ecc * cos(E)
+        // This is nice in an ideal case, but more research has shown that it has a big problem as e -> 1 */
+        // The denominator becomes zero, and that will trap
+        
+        let numerator = cos(E) - eccentricity
+        let denominator = 1 - eccentricity * cos(E)
         
         return acos(numerator/denominator)
          
-         
+        /*
          Instead, the code from Matt's library (and Wikipedia):
          
          sin_nu = (np.sin(E)*np.sqrt(1.-e**2.))/(1.-e*np.cos(E))
          cos_nu = (np.cos(E)-e)/(1.-e*np.cos(E))
          nu = np.arctan2(sin_nu,cos_nu)
-         */
         
         let sin_nu = (sin(E) * sqrt(1 - e * e)) / (1 - e * cos(E))
         let cos_nu = (cos(E) - e) / (1 - e * cos(E))
@@ -272,6 +272,7 @@ public class Orbit: Codable {
         }
         
         return nu
+        */
     }
     
     public func radius(atTime time: Double = 0) -> Double {
