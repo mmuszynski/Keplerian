@@ -11,7 +11,7 @@ import Foundation
 public struct CelestialBody: Equatable, Codable {
     public var gravitationalParameter: Double
     public var radius: Double
-    public var atmosphereAltitude: Double = 70000
+    public var atmosphereAltitude: Double = 0
     public var orbit: Orbit?
     public var mass: Double
     
