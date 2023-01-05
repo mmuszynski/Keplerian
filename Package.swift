@@ -23,7 +23,8 @@ let package = Package(
             name: "Keplerian",
             dependencies: [],
             path: "Keplerian",
-            exclude: ["Info.plist"]),
+            exclude: ["Info.plist"],
+            resources: [.process("Resources")]),
         .testTarget(
             name: "KeplerianTests",
             dependencies: ["Keplerian"],
