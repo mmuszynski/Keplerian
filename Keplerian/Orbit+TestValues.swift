@@ -32,4 +32,11 @@ extension Orbit {
         let orbit = Orbit(semiMajorAxis: 6371000 * 0.5 + 50, eccentricity: 0.9999, meanAnomaly: 0.0, inclination: 0.129754841327667, LAN: 30, argumentOfPeriapsis: 30, centralBody: earth)
         return orbit
     }
+    
+    public class var exampleEscapeOrbit: Orbit {
+        let url = Bundle.main.url(forResource: "munEscapeOrbit", withExtension: "json")!
+        let data = try! Data(contentsOf: url)
+        let decoder = JSONDecoder()
+        return try! decoder.decode(Orbit.self, from: data)
+    }
 }
