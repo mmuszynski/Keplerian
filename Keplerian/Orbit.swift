@@ -243,14 +243,20 @@ public class Orbit: Codable {
             E = self.hyperbolicAnomaly(fromMeanAnomaly: meanAnomaly)
             return 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(E / 2))
         }
-
-        // This is nice in an ideal case, but more research has shown that it has a big problem as e -> 1 */
-        // The denominator becomes zero, and that will trap
         
+        /*
+        // This is nice in an ideal case, but more research has shown that it has a big problem as e -> 1
+        // The denominator becomes zero, and that will trap
+        // It's a pretty basic method, and there is a better (?) method implemented below
         let numerator = cos(E) - eccentricity
         let denominator = 1 - eccentricity * cos(E)
-        
+
         return acos(numerator/denominator)
+        */
+        
+        //https://en.wikipedia.org/wiki/True_anomaly
+        let beta = e / (1 + sqrt(1 - e * e))
+        return E + 2 * atan(beta * sin(E) / (1 - beta * cos(E)))
          
         /*
          Instead, the code from Matt's library (and Wikipedia):

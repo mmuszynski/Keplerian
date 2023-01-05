@@ -113,6 +113,33 @@ class OrbitTests: XCTestCase {
         print(orbit.radius())
         print(orbit.periapsis)
     }
+    
+    func testKSPOrbit() {
+        let orbitURL = Bundle.module.url(forResource: "realKSPOrbit", withExtension: "json")!
+        
+        do {
+            let orbitData = try Data(contentsOf: orbitURL)
+            let decoder = JSONDecoder()
+            let orbit = try decoder.decode(Orbit.self, from: orbitData)
+            XCTAssertEqual(orbit.altitude(), 80.0)
+        } catch {
+            XCTFail("Unhandled error \(error)")
+        }
+    }
+    
+    func testKSPOrbit2() {
+        let orbitURL = Bundle.module.url(forResource: "129975m-orbit", withExtension: "json")!
+        
+        do {
+            let orbitData = try Data(contentsOf: orbitURL)
+            let decoder = JSONDecoder()
+            let orbit = try decoder.decode(Orbit.self, from: orbitData)
+            XCTAssertEqual(orbit.altitude(), 129975)
+        } catch {
+            XCTFail("Unhandled error \(error)")
+        }
+    }
+        
 }
 
 private extension Orbit {
