@@ -139,6 +139,10 @@ class OrbitTests: XCTestCase {
             XCTFail("Unhandled error \(error)")
         }
     }
+    
+    func testOrbitLoad() {
+        let _ = Orbit.exampleEscapeOrbit
+    }
         
 }
 
