@@ -161,7 +161,7 @@ public class Orbit: Codable {
     }
     
     public func hyperbolicMeanAnomaly(atTime time: Double = 0) -> Double {
-        sqrt(mu / pow(-a, 3)) * time
+        (sqrt(mu / pow(-a, 3)) * time + meanAnomaly).truncatingRemainder(dividingBy: 2 * .pi)
     }
     
     public func hyperbolicAnomaly(fromMeanAnomaly M: Double) -> Double {

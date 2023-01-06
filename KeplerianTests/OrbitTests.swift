@@ -96,7 +96,7 @@ class OrbitTests: XCTestCase {
     }
     
     func testHyperbolicOrbit() {
-        let orbit = Orbit(semiMajorAxis: (-700000.0).meters, eccentricity: 1.25, meanAnomaly: 0.0.rad, inclination: 0.0.rad, LAN: 0.0.rad, argumentOfPeriapsis: 0.0.rad, centralBody: .kerbin)
+        let orbit = Orbit.exampleEscapeOrbit
         
         XCTAssertGreaterThan(orbit.eccentricity, 1)
         XCTAssertLessThan(orbit.semiMajorAxis, 0)
@@ -109,8 +109,9 @@ class OrbitTests: XCTestCase {
         let M = orbit.hyperbolicMeanAnomaly(atTime: 0)
         let H = orbit.hyperbolicAnomaly(fromMeanAnomaly: M)
         
+        XCTAssertFalse(orbit.altitude().isNaN)
+        XCTAssertFalse(orbit.trueAnomaly().isNaN)
         
-        XCTFail("unimplemented")
         print(orbit.radius())
         print(orbit.periapsis)
     }
