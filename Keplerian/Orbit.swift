@@ -160,6 +160,10 @@ public class Orbit: Codable {
         }
     }
     
+    public func hyperbolicMeanAnomaly(atTime time: Double = 0) -> Double {
+        sqrt(mu / pow(-a, 3)) * time
+    }
+    
     public func hyperbolicAnomaly(fromMeanAnomaly M: Double) -> Double {
         let tolerance = 0.0005
         let eccentricity = self.eccentricity
@@ -237,12 +241,14 @@ public class Orbit: Codable {
     }
     
     private func trueAnomaly(atTimeFromEpoch time: Double = 0) -> Double {
-        let meanAnomaly = self.meanAnomaly(atTimeFromEpoch: time)
-        var E = self.eccentricAnomaly(atTimeFromEpoch: time)
         if self.isHyperbolic {
-            E = self.hyperbolicAnomaly(fromMeanAnomaly: meanAnomaly)
+            let anomaly = self.hyperbolicMeanAnomaly(atTime: time)
+            let E = self.hyperbolicAnomaly(fromMeanAnomaly: anomaly)
             return 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(E / 2))
         }
+        
+        let meanAnomaly = self.meanAnomaly(atTimeFromEpoch: time)
+        var E = self.eccentricAnomaly(atTimeFromEpoch: time)
         
         /*
         // This is nice in an ideal case, but more research has shown that it has a big problem as e -> 1
