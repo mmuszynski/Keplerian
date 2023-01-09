@@ -11,6 +11,10 @@ import simd
 
 //http://www.bogan.ca/orbits/kepler/orbteqtn.html
 
+fileprivate extension Double {
+    static let twoPi = 2 * Double.pi
+}
+
 public class Orbit: Codable {
     
     //-MARK: Classcal Orbital Elements
@@ -176,19 +180,19 @@ public class Orbit: Codable {
         return meanAnomaly(atTimeFromEpoch: timeFromEpoch(for: time))
     }
     
-    private func meanAnomaly(atTimeFromEpoch time: Double = 0) -> Double {
+    private func meanAnomaly(atTimeFromEpoch time: Double = 0, in range: Range<Double> = 0..<Double.twoPi) -> Double {
         var meanAnomalyAtTime = self.meanMotion * time + meanAnomaly;
-        while meanAnomalyAtTime > .pi {
+        while meanAnomalyAtTime >= range.upperBound {
             meanAnomalyAtTime -= 2.0 * .pi
         }
         
-        while meanAnomalyAtTime < -.pi {
+        while meanAnomalyAtTime < range.lowerBound {
             meanAnomalyAtTime += 2.0 * .pi
         }
         
         return meanAnomalyAtTime
     }
-    
+        
     public func hyperbolicAnomaly(fromMeanAnomaly M: Double) -> Double {
         let tolerance = 0.0005
         
@@ -252,9 +256,8 @@ public class Orbit: Codable {
     }
     
     private func trueAnomaly(atTimeFromEpoch time: Double = 0) -> Double {
-        let meanAnomaly = self.meanAnomaly(atTimeFromEpoch: time)
-
         if self.isHyperbolic {
+            let meanAnomaly = self.meanAnomaly(atTimeFromEpoch: time, in: -Double.pi..<Double.pi)
             let F = self.hyperbolicAnomaly(fromMeanAnomaly: meanAnomaly)
             return 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(F / 2))
         }

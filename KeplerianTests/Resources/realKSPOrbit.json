@@ -1,1 +1,30 @@
-{"inclination":0.097208589315414429,"meanAnomaly":3.1415905952453613,"epoch":1584209.625,"eccentricity":0.99479848146438599,"LAN":290.90420532226562,"argumentOfPeriapsis":89.99981689453125,"centralBody":{"mass":5.2915158000000001e+22,"orbit":{"inclination":0,"meanAnomaly":3.1400000000000001,"epoch":0,"eccentricity":0,"LAN":0,"argumentOfPeriapsis":0,"centralBody":{"mass":1.7565459e+28,"atmosphereAltitude":70000,"gravitationalParameter":1.1723328e+18,"radius":261600000},"semiMajorAxis":13599840256},"atmosphereAltitude":70000,"gravitationalParameter":3531600000000,"radius":600000},"semiMajorAxis":300819.3125}
+{
+  "inclination": 0.09720858931541443,
+  "meanAnomaly": 3.1415905952453613,
+  "epoch": 1584209.625,
+  "eccentricity": 0.994798481464386,
+  "LAN": 290.9042053222656,
+  "argumentOfPeriapsis": 89.99981689453125,
+  "centralBody": {
+    "mass": 5.2915158e+22,
+    "orbit": {
+      "inclination": 0,
+      "meanAnomaly": 3.14,
+      "epoch": 0,
+      "eccentricity": 0,
+      "LAN": 0,
+      "argumentOfPeriapsis": 0,
+      "centralBody": {
+        "mass": 1.7565459e+28,
+        "atmosphereAltitude": 70000,
+        "gravitationalParameter": 1172332800000000000,
+        "radius": 261600000
+      },
+      "semiMajorAxis": 13599840256
+    },
+    "atmosphereAltitude": 70000,
+    "gravitationalParameter": 3531600000000,
+    "radius": 600000
+  },
+  "semiMajorAxis": 300819.3125
+}
