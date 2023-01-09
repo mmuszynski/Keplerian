@@ -210,7 +210,6 @@ public class Orbit: Codable {
             F = f1
         }
         
-        if F.isNaN { fatalError() }
         return F
     }
     
