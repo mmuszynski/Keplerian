@@ -106,7 +106,7 @@ class OrbitTests: XCTestCase {
         
         //http://control.asu.edu/Classes/MAE462/462Lecture05.pdf
         //Given time, t, solve for Hyperbolic Mean Anomaly
-        let M = orbit.hyperbolicMeanAnomaly(atTime: 0)
+        let M = orbit.meanAnomaly(atTime: 0)
         let H = orbit.hyperbolicAnomaly(fromMeanAnomaly: M)
         
         XCTAssertFalse(orbit.altitude().isNaN)

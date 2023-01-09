@@ -35,7 +35,7 @@ public class Orbit: Codable {
     //-MARK: Orbit Descriptions
     /// Whether or not the orbit is going to clear the body's radius
     public var isSubOrbital: Bool {
-        #warning("This is probably incorrect for non-elliptical orbits")
+        guard isHyperbolic else { return false }
         return self.semiMajorAxis < self.centralBody.radius
     }
     
@@ -66,8 +66,16 @@ public class Orbit: Codable {
         self.centralBody = centralBody
     }
     
+    /// Initializes an `Orbit` with the prescribed Keplerian orbital elements using measurements
+    ///
+    /// - Parameters:
+    ///   - semiMajorAxis: The semi-major axis of the orbit expressed as a measurement
+    ///   - eccentricity: The eccentricity of the orbit expressed as a measurement
+    ///   - meanAnomaly: The mean anomaly of the orbot expressed as a measurement
+    ///   - inclination: The inclination of the orbit expressed as a measurement
+    ///   - LAN: The longitude of ascending node of the orbit expressed as a measurement
+    ///   - argumentOfPeriapsis: The argument of periapsis of the orbit
     public convenience init(semiMajorAxis: Measurement<UnitLength>, eccentricity: Double, meanAnomaly: Measurement<UnitAngle>, inclination: Measurement<UnitAngle>, LAN: Measurement<UnitAngle>, argumentOfPeriapsis: Measurement<UnitAngle>, centralBody: CelestialBody) {
-        
         self.init(semiMajorAxis: semiMajorAxis.converted(to: .meters).value,
                   eccentricity: eccentricity,
                   meanAnomaly: meanAnomaly.converted(to: .radians).value,
@@ -150,39 +158,13 @@ public class Orbit: Codable {
         return semiMajorAxis * sqrt(1.0 - eccentricity * eccentricity)
     }
     
+    /// The mean motion of the orbig
     public var meanMotion: Double {
-        let mu = centralBody.gravitationalParameter
-
         if semiMajorAxis < 0 {
             return sqrt(mu / pow(-semiMajorAxis, 3))
         } else {
             return sqrt(mu / pow(semiMajorAxis, 3))
         }
-    }
-    
-    public func hyperbolicMeanAnomaly(atTime time: Double = 0) -> Double {
-        var hma = (sqrt(mu / pow(-a, 3)) * time + meanAnomaly).truncatingRemainder(dividingBy: 2 * .pi)
-        while hma < 0 { hma += 2 * .pi }
-        return hma
-    }
-    
-    public func hyperbolicAnomaly(fromMeanAnomaly M: Double) -> Double {
-        let tolerance = 0.0005
-        let eccentricity = self.eccentricity
-        
-        //need to solve M = e * sinh(H) - H
-        
-        var H: Double = M
-        
-        var delta = Double.greatestFiniteMagnitude
-        
-        while abs(delta) > tolerance {
-            let h1 = H + (M - eccentricity * sinh(H) + H) / (eccentricity * cosh(H) - 1)
-            delta = h1 - H
-            H = h1
-        }
-        
-        return H
     }
     
     public var period: Double {
@@ -196,11 +178,38 @@ public class Orbit: Codable {
     
     private func meanAnomaly(atTimeFromEpoch time: Double = 0) -> Double {
         var meanAnomalyAtTime = self.meanMotion * time + meanAnomaly;
-        while meanAnomalyAtTime > (2.0 * Double.pi) {
-            meanAnomalyAtTime -= 2.0 * Double.pi
+        while meanAnomalyAtTime > .pi {
+            meanAnomalyAtTime -= 2.0 * .pi
         }
+        
+        while meanAnomalyAtTime < -.pi {
+            meanAnomalyAtTime += 2.0 * .pi
+        }
+        
         return meanAnomalyAtTime
     }
+    
+    public func hyperbolicAnomaly(fromMeanAnomaly M: Double) -> Double {
+        let tolerance = 0.0005
+        
+        //need to solve M = e * sinh(F) - F
+        // start with an initial value of M
+        var F: Double = M
+        var delta = Double.greatestFiniteMagnitude
+        
+        while abs(delta) > tolerance {
+            let numerator = M - e * sinh(F) + F
+            let denominator = e * cosh(F) - 1
+            let f1 = F + numerator / denominator
+            
+            delta = f1 - F
+            F = f1
+        }
+        
+        if F.isNaN { fatalError() }
+        return F
+    }
+    
     
     public func eccentricAnomaly(fromMeanAnomaly meanAnomaly: Double) -> Double {
         let tolerance = 0.0005
@@ -243,14 +252,14 @@ public class Orbit: Codable {
     }
     
     private func trueAnomaly(atTimeFromEpoch time: Double = 0) -> Double {
+        let meanAnomaly = self.meanAnomaly(atTimeFromEpoch: time)
+
         if self.isHyperbolic {
-            let anomaly = self.hyperbolicMeanAnomaly(atTime: time)
-            let E = self.hyperbolicAnomaly(fromMeanAnomaly: anomaly)
-            return 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(E / 2))
+            let F = self.hyperbolicAnomaly(fromMeanAnomaly: meanAnomaly)
+            return 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(F / 2))
         }
         
-        let meanAnomaly = self.meanAnomaly(atTimeFromEpoch: time)
-        var E = self.eccentricAnomaly(atTimeFromEpoch: time)
+        let E = self.eccentricAnomaly(atTimeFromEpoch: time)
         
         /*
         // This is nice in an ideal case, but more research has shown that it has a big problem as e -> 1
@@ -297,7 +306,10 @@ public class Orbit: Codable {
         let trueAnomaly = self.trueAnomaly(atTimeFromEpoch: time)
         
         if self.isHyperbolic {
-            return a * (1 - e * cosh(trueAnomaly))
+            //return a * (1 - e * cosh(trueAnomaly))
+            let num = a * (1 - e * e)
+            let den = 1 + e * cos(trueAnomaly)
+            return num / den
         }
         
         return p / (1 + e * cos(trueAnomaly))
@@ -338,7 +350,6 @@ public class Orbit: Codable {
         let effectiveMeanAnomaly = self.meanAnomaly(atTimeFromEpoch: time)
         
         if self.isHyperbolic {
-            let hyperbolicAnomaly = self.hyperbolicAnomaly(fromMeanAnomaly: effectiveMeanAnomaly)
             let meanAnomalyAtPeriapsis = 0.0
             let time = (effectiveMeanAnomaly - meanAnomalyAtPeriapsis) / meanMotion
             return time
