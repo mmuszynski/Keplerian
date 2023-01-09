@@ -257,7 +257,7 @@ public class Orbit: Codable {
     
     private func trueAnomaly(atTimeFromEpoch time: Double = 0) -> Double {
         if self.isHyperbolic {
-            let meanAnomaly = self.meanAnomaly(atTimeFromEpoch: time, in: -Double.pi..<Double.pi)
+            let meanAnomaly = self.meanAnomaly(atTimeFromEpoch: time, in: -Double.pi..<Double.greatestFiniteMagnitude)
             let F = self.hyperbolicAnomaly(fromMeanAnomaly: meanAnomaly)
             return 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(F / 2))
         }
