@@ -156,7 +156,7 @@ public class Orbit: Codable {
     private func altitude(atTimeFromEpoch time: Double = 0) -> Double {
         return radius(atTimeFromEpoch: time) - centralBody.radius
     }
-
+    
     /// The semi-minor axis of the orbit
     public var semiMinorAxis: Double {
         return semiMajorAxis * sqrt(1.0 - eccentricity * eccentricity)
@@ -192,7 +192,7 @@ public class Orbit: Codable {
         
         return meanAnomalyAtTime
     }
-        
+    
     public func hyperbolicAnomaly(fromMeanAnomaly M: Double) -> Double {
         let tolerance = 0.0005
         
@@ -264,40 +264,40 @@ public class Orbit: Codable {
         let E = self.eccentricAnomaly(atTimeFromEpoch: time)
         
         /*
-        // This is nice in an ideal case, but more research has shown that it has a big problem as e -> 1
-        // The denominator becomes zero, and that will trap
-        // It's a pretty basic method, and there is a better (?) method implemented below
-        let numerator = cos(E) - eccentricity
-        let denominator = 1 - eccentricity * cos(E)
-
-        return acos(numerator/denominator)
-        */
+         // This is nice in an ideal case, but more research has shown that it has a big problem as e -> 1
+         // The denominator becomes zero, and that will trap
+         // It's a pretty basic method, and there is a better (?) method implemented below
+         let numerator = cos(E) - eccentricity
+         let denominator = 1 - eccentricity * cos(E)
+         
+         return acos(numerator/denominator)
+         */
         
         //https://en.wikipedia.org/wiki/True_anomaly
         let beta = e / (1 + sqrt(1 - e * e))
         return E + 2 * atan(beta * sin(E) / (1 - beta * cos(E)))
-         
+        
         /*
          Instead, the code from Matt's library (and Wikipedia):
          
          sin_nu = (np.sin(E)*np.sqrt(1.-e**2.))/(1.-e*np.cos(E))
          cos_nu = (np.cos(E)-e)/(1.-e*np.cos(E))
          nu = np.arctan2(sin_nu,cos_nu)
-        
-        let sin_nu = (sin(E) * sqrt(1 - e * e)) / (1 - e * cos(E))
-        let cos_nu = (cos(E) - e) / (1 - e * cos(E))
-        var nu = atan2(sin_nu, cos_nu)
-        
-        while nu < 0 {
-            nu += 2 * .pi
-        }
-        
-        while nu >= .pi * 2 {
-            nu -= 2 * .pi
-        }
-        
-        return nu
-        */
+         
+         let sin_nu = (sin(E) * sqrt(1 - e * e)) / (1 - e * cos(E))
+         let cos_nu = (cos(E) - e) / (1 - e * cos(E))
+         var nu = atan2(sin_nu, cos_nu)
+         
+         while nu < 0 {
+         nu += 2 * .pi
+         }
+         
+         while nu >= .pi * 2 {
+         nu -= 2 * .pi
+         }
+         
+         return nu
+         */
     }
     
     public func radius(atTime time: Double = 0) -> Double {
@@ -306,7 +306,10 @@ public class Orbit: Codable {
     
     private func radius(atTimeFromEpoch time: Double = 0) -> Double {
         let trueAnomaly = self.trueAnomaly(atTimeFromEpoch: time)
-        
+        return radius(fromTrueAnomaly: trueAnomaly)
+    }
+    
+    public func radius(fromTrueAnomaly trueAnomaly: Double) -> Double {
         if self.isHyperbolic {
             //return a * (1 - e * cosh(trueAnomaly))
             let num = a * (1 - e * e)
@@ -409,7 +412,7 @@ public class Orbit: Codable {
         //    mu = kwargs['mu']
         //except:
         //    mu = 398600.4415
-
+        
         let i = inclination
         let OMEGA = LAN
         let omega = argumentOfPeriapsis
@@ -420,7 +423,7 @@ public class Orbit: Codable {
         //#define semipameter
         //p = a*(1-e**2)
         let p = semiMajorAxis * ( 1 - e * e )
-
+        
         //#define r in the perifocal plane
         
         //r_pqw = vstack([
@@ -432,7 +435,7 @@ public class Orbit: Codable {
                              y: p * sin(nu) / (1 + e * cos(nu)),
                              z: 0)
         let r_pqw_simd = r_pqw.simd
-
+        
         //#define v in the perifocal plane
         //v_pqw = vstack([
         //    (-sqrt(mu/p)*sin(nu)),
@@ -466,8 +469,8 @@ public class Orbit: Codable {
         
         let pqw2ijk = rot3 * rot2 * rot1
         let r_ijk = r_pqw_simd * pqw2ijk
-        let v_ijk = v_pqw_simd * pqw2ijk 
-                
+        let v_ijk = v_pqw_simd * pqw2ijk
+        
         //pqw2ijk = rz(-OMEGA).dot(rx(-i).dot(rz(-omega)))
         //r_ijk = pqw2ijk.dot(r_pqw)
         //v_ijk = pqw2ijk.dot(v_pqw)

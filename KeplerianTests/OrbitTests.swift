@@ -145,6 +145,30 @@ class OrbitTests: XCTestCase {
     func testOrbitLoad() {
         let _ = Orbit.exampleEscapeOrbit
     }
+    
+    func testKSPRelaySetup() {
+        let desiredOrbit = Orbit(semiMajorAxis: 5000000 + CelestialBody.duna.radius,
+                                 eccentricity: 0,
+                                 meanAnomaly: 0,
+                                 inclination: 0,
+                                 LAN: 0,
+                                 argumentOfPeriapsis: 0,
+                                 centralBody: .duna)
+        let period = desiredOrbit.period
+        
+        
+        let transferOrbit = Orbit(semiMajorAxis: (5000000 + 60000) / 2 + CelestialBody.duna.radius,
+                                  eccentricity: 0,
+                                  meanAnomaly: 0,
+                                  inclination: 0,
+                                  LAN: 0,
+                                  argumentOfPeriapsis: 0,
+                                  centralBody: .duna)
+        let transferPeriod = transferOrbit.period / 2
+        
+        let fraction = transferPeriod / period
+        print(fraction * 360)
+    }
         
 }
 
