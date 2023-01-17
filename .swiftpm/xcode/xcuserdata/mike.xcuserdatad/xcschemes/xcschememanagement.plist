@@ -29,16 +29,6 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>Keplerian_Keplerian</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>Keplerian_KeplerianTests</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 	</dict>
 </dict>
 </plist>
