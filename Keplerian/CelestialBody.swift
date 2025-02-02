@@ -38,4 +38,5 @@ public struct CelestialBody: Equatable, Codable {
         self.orbit = orbit
         self.mass = mass
     }
+    
 }
